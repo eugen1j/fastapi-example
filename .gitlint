@@ -1,0 +1,17 @@
+[general]
+# Ignore certain rules (comma-separated list), you can reference them by
+# their id or by their full name
+ignore=body-is-missing
+
+# Ignore any data send to gitlint via stdin
+# ignore-stdin=true
+
+# Configure title-max-length rule, set title length to 80 (72 = default)
+[title-max-length]
+line-length=100
+
+[title-match-regex]
+regex=^#\d+: .+$
+
+[title-min-length]
+min-length=20

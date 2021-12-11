@@ -1,0 +1,1 @@
+gitlint --msg-filename $1
