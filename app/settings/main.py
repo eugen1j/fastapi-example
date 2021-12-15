@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     POSTGRES_DSN: str = "postgresql://postgres:password@postgres:5432/postgres"
     AMQP_BROKER: str = "amqp://guest:guest@rabbitmq:5672"
 
+    SQLALCHEMY_ENGINE_POOL_SIZE: int = 20
+    SQLALCHEMY_ENGINE_MAX_OVERFLOW: int = 0
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
