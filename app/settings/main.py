@@ -4,6 +4,8 @@ from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.middleware import AgeLimit, Callbacks, Prometheus, Retries, TimeLimit
 from periodiq import PeriodiqMiddleware
 from pydantic import BaseSettings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from app.patches.main import patch
 
@@ -46,3 +48,11 @@ if settings.SENTRY_DSN:
         dsn=settings.SENTRY_DSN,
         traces_sample_rate=1.0,
     )
+
+engine = create_engine(
+    settings.POSTGRES_DSN,
+    pool_pre_ping=True,
+    pool_size=settings.SQLALCHEMY_ENGINE_POOL_SIZE,
+    max_overflow=settings.SQLALCHEMY_ENGINE_MAX_OVERFLOW,
+)
+SessionLocal = sessionmaker(bind=engine)

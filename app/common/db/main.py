@@ -18,3 +18,4 @@ class SQLModel(sm.SQLModel, table=False):
 
     class Config:
         alias_generator = camelize
+        allow_population_by_field_name = True

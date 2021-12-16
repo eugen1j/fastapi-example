@@ -7,6 +7,7 @@ from humps import camelize
 class BaseModel(pydantic.BaseModel):
     class Config:
         alias_generator = camelize
+        allow_population_by_field_name = True
 
 
 class AllOptional(pydantic.main.ModelMetaclass):

@@ -47,7 +47,7 @@ def update_db_user(
         password = data.pop("password")
         db_model.hashed_password = get_password_hash(password)
 
-    for key, value in data.values():
+    for key, value in data.items():
         setattr(db_model, key, value)
 
     db.add(db_model)

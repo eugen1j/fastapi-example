@@ -1,16 +1,9 @@
 # Import settings
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
 
 from app.common.dramatiq import DbSessionMiddleware
 from app.settings import main  # noqa
 
-main.broker.add_middleware(
-    DbSessionMiddleware(
-        engine=create_engine(main.settings.POSTGRES_DSN, pool_pre_ping=True)
-    )
-)
-
+main.broker.add_middleware(DbSessionMiddleware(engine=main.engine))
 
 # Import tasks
 

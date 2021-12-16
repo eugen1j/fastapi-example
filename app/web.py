@@ -10,14 +10,5 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 app.add_middleware(SentryAsgiMiddleware)
-app.add_middleware(
-    DBSessionMiddleware,
-    db_url=main.settings.POSTGRES_DSN,
-    commit_on_exit=True,
-    engine_args={
-        "pool_pre_ping": True,
-        "pool_size": main.settings.SQLALCHEMY_ENGINE_POOL_SIZE,
-        "max_overflow": main.settings.SQLALCHEMY_ENGINE_MAX_OVERFLOW,
-    },
-)
+app.add_middleware(DBSessionMiddleware, custom_engine=main.engine)
 app.include_router(url.api_router)
