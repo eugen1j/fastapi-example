@@ -37,7 +37,7 @@ target_metadata = SQLModel.metadata
 
 
 def get_url():
-    return os.getenv("POSTGRES_DSN")
+    return os.getenv("POSTGRES_DSN", "postgresql://postgres:password@postgres:5432/postgres")
 
 
 def run_migrations_offline():

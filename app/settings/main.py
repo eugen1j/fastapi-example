@@ -1,6 +1,9 @@
+import os
+
 import dramatiq
 import sentry_sdk
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
+from dramatiq.brokers.stub import StubBroker
 from dramatiq.middleware import AgeLimit, Callbacks, Prometheus, Retries, TimeLimit
 from periodiq import PeriodiqMiddleware
 from pydantic import BaseSettings
@@ -31,17 +34,23 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-broker = RabbitmqBroker(
-    url=settings.AMQP_BROKER,
-    middleware=[
-        Prometheus(),
-        AgeLimit(),
-        TimeLimit(),
-        Callbacks(),
-        Retries(),
-        PeriodiqMiddleware(),
-    ],
-)
+
+if os.getenv("UNIT_TESTS", None) is None:
+    broker = RabbitmqBroker(
+        url=settings.AMQP_BROKER,
+        middleware=[
+            Prometheus(),
+            AgeLimit(),
+            TimeLimit(),
+            Callbacks(),
+            Retries(),
+            PeriodiqMiddleware(),
+        ],
+    )
+else:
+    broker = StubBroker()
+    broker.emit_after("process_boot")
+
 dramatiq.set_broker(broker)
 if settings.SENTRY_DSN:
     sentry_sdk.init(

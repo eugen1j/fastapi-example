@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.domains.user.db import create_db_user
-from app.domains.user.models import UserDb, UserCreate
+from app.domains.user.models import UserCreate, UserDb
 from app.tests.utils.common import random_lower_string
 
 

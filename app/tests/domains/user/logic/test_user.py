@@ -1,7 +1,7 @@
 from app.domains.user.logic import get_password_hash, verify_password
 
 
-def test_correct_password_verified():
+def test_correct_password_verified() -> None:
     password = "123456qwert!@#$%фывап"
 
     hash_ = get_password_hash(password)
@@ -11,7 +11,7 @@ def test_correct_password_verified():
     assert verify_password(password, another_hash_)
 
 
-def test_incorrect_password_not_verified():
+def test_incorrect_password_not_verified() -> None:
     password = "654321qwert!@#$%фывап"
     hash_ = get_password_hash(password)
     invalid_password = "654321QWERT!@#$%ФЫВАП"

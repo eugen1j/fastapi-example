@@ -1,7 +1,8 @@
 from contextvars import ContextVar
-from typing import Optional, Dict
+from typing import Dict, Optional
 
-from dramatiq import Middleware
+from dramatiq import Broker, Message, Middleware
+from dramatiq.results.backend import Result
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -13,7 +14,7 @@ class MissingSessionError(Exception):
     """Exception raised for when the user tries to
     access a database session before it is created."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         msg = """
         No session found! Either you are not currently in a request context,
         or you need to manually create a session context by using a `db` instance as
@@ -29,7 +30,7 @@ class MissingSessionError(Exception):
 class SessionNotInitialisedError(Exception):
     """Exception raised when the user creates a new DB session without first initialising it."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         msg = """
         Session not initialised! Ensure that DBSessionMiddleware has been initialised before
         attempting database access.
@@ -60,11 +61,21 @@ class DbSessionMiddleware(Middleware, metaclass=DBSessionMeta):
         session_args = session_args or {}
         _Session = sessionmaker(bind=engine, **session_args)
 
-    def before_process_message(self, broker, message):
+    def before_process_message(self, broker: Broker, message: Message) -> None:
+        if _Session is None:
+            raise SessionNotInitialisedError
+
         s = _Session()
         _session.set(s)
 
-    def after_process_message(self, broker, message, *, result=None, exception=None):
+    def after_process_message(
+        self,
+        broker: Broker,
+        message: Message,
+        *,
+        result: Optional[Result] = None,
+        exception: Optional[Exception] = None
+    ) -> None:
         DbSessionMiddleware.session.close()
         _session.set(None)
 

@@ -6,13 +6,11 @@ stages:
   - deploy
 
 variables:
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   POSTGRES_PASSWORD: password
-
 
 test:
   services:
-    - postgres:13.3
+    - postgres:14.1
   cache:
     key:
       files:
@@ -26,35 +24,9 @@ test:
     - python -m venv venv
     - . venv/bin/activate
     - make dev-deps
-    - cp .env.ci .env
-    - make lint-commits
     - make lint
-    - make checkmigrations
+    - alembic-autogen-check
+    - make migrate
     - make test
-  tags:
-    - daiquiri-ci
-
-release:
-  stage: release
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CONTAINER_RELEASE_IMAGE .
-    - docker push $CONTAINER_RELEASE_IMAGE
-  only:
-    - master
-  tags:
-    - daiquiri-ci-shell
-
-deploy:
-  stage: deploy
-
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - bash -x deploy.sh
-  only:
-    - master
-  tags:
-    - daiquiri-sandbox2
 
 

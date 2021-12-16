@@ -6,11 +6,14 @@ deps:
 	pip install --upgrade pip poetry
 	poetry install --no-dev
 
-#server:
-#	python manage.py migrate && python manage.py init_rbac && python manage.py runserver
-#
-#queue:
-#	python manage.py rundramatiq
+server:
+	uvicorn app.web:app --reload
+
+queue:
+	dramatiq app.worker
+
+migrate:
+	alembic upgrade head
 
 lint:
 	#make lint-commits
@@ -25,9 +28,9 @@ clean-lint:
 	flake8 app
 	mypy app
 
-#test:
-#	pytest -n 4 -x
-#
+test:
+	pytest -n 4 -x
+
 install-hooks:
 	# We use a '#' symbol in the start of the commit msg title
 	# to mention a Gitlab issue. So we should change commentChar to ';'
