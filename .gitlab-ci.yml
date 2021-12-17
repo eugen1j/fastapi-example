@@ -24,14 +24,14 @@ test:
     - . venv/bin/activate
     - make dev-deps
     - make lint
-    - alembic-autogen-check
     - make migrate
+    - alembic-autogen-check
     - make test
 
 deploy:
   script:
-    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/fastapi-boilerplate2.git
-    - git push -f heroku HEAD:master
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/fastapi-boilerplate2.git || true
+    - git push -f heroku master
   stage: deploy
   only:
     - master

@@ -10,5 +10,5 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 app.add_middleware(SentryAsgiMiddleware)
-app.add_middleware(DBSessionMiddleware, custom_engine=main.engine)
+app.add_middleware(DBSessionMiddleware, custom_engine=main.engine, commit_on_exit=True)
 app.include_router(url.api_router)

@@ -141,10 +141,7 @@ pathspec = ">=0.9.0,<1"
 platformdirs = ">=2"
 regex = ">=2021.4.4"
 tomli = ">=0.2.6,<2.0.0"
-typing-extensions = [
-    {version = ">=3.10.0.0", markers = "python_version < \"3.10\""},
-    {version = "!=3.10.0.1", markers = "python_version >= \"3.10\""},
-]
+typing-extensions = ">=3.10.0.0"
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -1227,8 +1224,8 @@ standard = ["websockets (>=9.1)", "httptools (>=0.2.0,<0.3.0)", "watchgod (>=0.6
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "cb1141a7cff77c62c9706754b0ff32f55c357cdb4b58dd7be9a826d1bf70689f"
+python-versions = "3.9.9"
+content-hash = "3accc37066d21a83535ddf6dd074f49e0c65482e55219096d414fc75cf053bcd"
 
 [metadata.files]
 alembic = [
