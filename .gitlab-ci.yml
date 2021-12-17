@@ -2,7 +2,6 @@ image: python:3.9
 
 stages:
   - test
-  - release
   - deploy
 
 variables:
@@ -29,4 +28,11 @@ test:
     - make migrate
     - make test
 
+deploy:
+  script:
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/fastapi-boilerplate2.git
+    - git push -f heroku HEAD:master
+  stage: deploy
+  only:
+    - master
 
