@@ -21,10 +21,10 @@ def get_model(
     *,
     field_name: str = "id",
     path_name: str = "pk",
-) -> Callable[[Session, str], TDB]:
+) -> Callable[[Session, int], TDB]:
     def wrapper(
         db: Session = Depends(get_db),
-        field_value: str = Path(..., alias=path_name),
+        field_value: int = Path(..., alias=path_name),
     ) -> TDB:
         try:
             return (
@@ -43,10 +43,10 @@ def remove_model(
     *,
     field_name: str = "id",
     path_name: str = "pk",
-) -> Callable[[Session, str], None]:
+) -> Callable[[Session, int], None]:
     def wrapper(
         db: Session = Depends(get_db),
-        field_value: str = Path(..., alias=path_name),
+        field_value: int = Path(..., alias=path_name),
     ) -> None:
         try:
             model = (
