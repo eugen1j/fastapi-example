@@ -4,7 +4,12 @@ from starlette.responses import Response
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 
 from app.common.errors import ErrorMessage
-from app.domains.user.db import create_db_user, update_db_user
+from app.domains.user.db import (
+    create_db_user,
+    update_db_user,
+    validate_user_create,
+    validate_user_update,
+)
 from app.domains.user.models import UserCreate, UserDb, UserUpdate, UserView
 from app.services.webapi.deps import get_db, get_model, remove_model
 
@@ -16,6 +21,7 @@ def create_user(
     user: UserCreate,
     db: Session = Depends(get_db),
 ) -> UserDb:
+    validate_user_create(db, user)
     return create_db_user(db, user)
 
 
@@ -29,6 +35,7 @@ def update_user(
     db: Session = Depends(get_db),
     user_db: UserDb = Depends(get_model(UserDb)),
 ) -> UserDb:
+    validate_user_update(db, user_db, user)
     return update_db_user(db, user_db, user)
 
 

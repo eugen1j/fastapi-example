@@ -1,8 +1,7 @@
-from typing import List
-
 from fastapi import Path
 from sqlalchemy.orm import Session
 
+from app.common.errors import RequestValidationError
 from app.common.pydantic import BaseModel
 from app.domains.user.logic import get_password_hash
 from app.domains.user.models import UserCreate, UserDb, UserUpdate
@@ -21,10 +20,6 @@ class PagePagination(BaseModel):
         return self.page_size
 
 
-def get_user_list(db: Session, pagination: PagePagination) -> List[UserDb]:
-    return db.query(UserDb).offset(pagination.offset).limit(pagination.limit).all()
-
-
 def create_db_user(
     db: Session,
     user: UserCreate,
@@ -39,16 +34,44 @@ def create_db_user(
 
 def update_db_user(
     db: Session,
-    db_model: UserDb,
-    model: UserUpdate,
+    user_db: UserDb,
+    user: UserUpdate,
 ) -> UserDb:
-    data = model.dict(exclude_unset=True)
+    data = user.dict(exclude_unset=True)
     if "password" in data:
         password = data.pop("password")
-        db_model.hashed_password = get_password_hash(password)
+        user_db.hashed_password = get_password_hash(password)
 
     for key, value in data.items():
-        setattr(db_model, key, value)
+        setattr(user_db, key, value)
 
-    db.add(db_model)
-    return db_model
+    db.add(user_db)
+    return user_db
+
+
+def validate_user_create(
+    db: Session,
+    user: UserCreate,
+) -> None:
+    if db.query(UserDb).filter(UserDb.username == user.username).first():
+        raise RequestValidationError(
+            "body.username",
+            f"Username '{user.username}' is already taken",
+        )
+
+
+def validate_user_update(
+    db: Session,
+    user_db: UserDb,
+    user: UserUpdate,
+) -> None:
+    if (
+        user.username
+        and db.query(UserDb)
+        .filter(UserDb.username == user.username, UserDb.id != user_db.id)
+        .first()
+    ):
+        raise RequestValidationError(
+            "body.username",
+            f"Username '{user.username}' is already taken",
+        )
